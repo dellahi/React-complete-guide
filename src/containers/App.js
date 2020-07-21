@@ -4,7 +4,8 @@ import classes from './App.module.css';
 
 import Persons from '../components/Persons/Persons';
 import Cockpit from '../components/Cockpit/Cockpit';
-
+import withClass from '../hoc/withClass';
+import Auxilliary from '../hoc/Auxilliary';
 //import { findRenderedComponentWithType } from 'react-dom/test-utils';
 //import { render } from '@testing-library/react';
 
@@ -35,6 +36,14 @@ import Cockpit from '../components/Cockpit/Cockpit';
 
   componentDidMount(){
     console.log('[App.js] componentDidMount');
+  }
+
+  shouldComponentUpdate(){
+    console.log('[App.js] shouldcomponentUpdate');
+    return true;
+  }
+  componentDidUpdate(){
+    console.log('[App.js] componentDidUpdate');
   }
 
   deletePersonHandler=(personIndex) => {
@@ -72,20 +81,19 @@ import Cockpit from '../components/Cockpit/Cockpit';
    
 
   return (
-      <div className={classes.App}>
+      <Auxilliary classes={classes.App}>
         <Cockpit title = {this.props.appTitle} 
                  showPersons = {this.state.showPersons}
-                 persons={this.state.persons}
+                 personslenght={this.state.persons.length}
                  clicked={this.togglePersonsHandler} />  
         {persons}
-      </div>
-
+      </Auxilliary>
   );
   //React.createElement('div',{className:'App'},React.createElement('h1',null,'Hi, I\' am React App'));
   }
 }
 
-export default App;
+export default withClass(App, classes.App);
 
 /*
   exo1 for example
