@@ -6,6 +6,8 @@ import Persons from '../components/Persons/Persons';
 import Cockpit from '../components/Cockpit/Cockpit';
 import withClass from '../hoc/withClass';
 import Auxilliary from '../hoc/Auxilliary';
+import AuthContext from '../context/auth-context';
+
 //import { findRenderedComponentWithType } from 'react-dom/test-utils';
 //import { render } from '@testing-library/react';
 
@@ -18,12 +20,14 @@ import Auxilliary from '../hoc/Auxilliary';
   
   state = {
     persons:[
-      { id: '123', name:'dellahi1', age: 28},
+      { id: '123', name:'dellahi1', age: "28"},
       { id: '1234', name:'dellahi2', age: 27},
       { id: '123456', name:'dellahi3', age: 26}
     ],
     otherState: 'some other value',
-    showPersons:false
+    showPersons:false,
+    changeCounter: 0,
+    authenticated: false
   };
 
   static getDerivedStateFromProps(props, state){
@@ -60,11 +64,22 @@ import Auxilliary from '../hoc/Auxilliary';
     const persons =[...this.state.persons];
     persons[personIndex]=person;
 
-    this.setState( {persons: persons});
+    this.setState((prevState, props) => {
+      return {
+        persons: persons,
+        changeCounter: prevState.changeCounter + 1
+      }
+    } );
   }
   togglePersonsHandler = () => {
     const doesShow= this.state.showPersons;
     this.setState({showPersons: !doesShow});
+  }
+
+  loginHandler = () => {
+      this.setState({
+        authenticated: true
+      })
   }
   render() {
 
@@ -76,17 +91,20 @@ import Auxilliary from '../hoc/Auxilliary';
             persons={this.state.persons}
             clicked={this.deletePersonHandler}
             changed={this.nameChangeHandler}
+            isAutenticated={this.state.authenticated}
             />
         }
    
 
   return (
       <Auxilliary classes={classes.App}>
-        <Cockpit title = {this.props.appTitle} 
-                 showPersons = {this.state.showPersons}
-                 personslenght={this.state.persons.length}
-                 clicked={this.togglePersonsHandler} />  
-        {persons}
+        <AuthContext.Provider value={{authenticated: this.state.authenticated, login:this.loginHandler}}>
+          <Cockpit title = {this.props.appTitle} 
+            showPersons = {this.state.showPersons}
+            personslenght={this.state.persons.length}
+            clicked={this.togglePersonsHandler}/>  
+          {persons}
+        </AuthContext.Provider>
       </Auxilliary>
   );
   //React.createElement('div',{className:'App'},React.createElement('h1',null,'Hi, I\' am React App'));
